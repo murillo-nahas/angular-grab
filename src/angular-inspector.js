@@ -1,6 +1,7 @@
 const AngularInspector = (() => {
   function getNgContext(el) {
     const key = Object.keys(el).find((k) => k.startsWith("__ngContext__"));
+
     return key ? el[key] : null;
   }
 
@@ -9,16 +10,23 @@ const AngularInspector = (() => {
 
     while (node) {
       const ctx = getNgContext(node);
+
       if (ctx) {
         const instance = Array.isArray(ctx) ? ctx[8] : ctx;
-        if (instance?.constructor?.name && instance.constructor.name !== "Object") {
+
+        if (
+          instance?.constructor?.name &&
+          instance.constructor.name !== "Object"
+        ) {
           return instance.constructor.name;
         }
       }
 
       const hostKey = Object.keys(node).find((k) => k.startsWith("__ngHost__"));
+
       if (hostKey) {
         const host = node[hostKey];
+
         if (host?.constructor?.name && host.constructor.name !== "Object") {
           return host.constructor.name;
         }
@@ -30,6 +38,7 @@ const AngularInspector = (() => {
     if (window.ng && typeof window.ng.getComponent === "function") {
       try {
         const comp = window.ng.getComponent(el);
+
         if (comp?.constructor) {
           return comp.constructor.name;
         }
@@ -43,9 +52,13 @@ const AngularInspector = (() => {
     let node = el;
 
     while (node) {
-      if (node.attributes && Array.from(node.attributes).some((a) => a.name.startsWith("_nghost-"))) {
+      if (
+        node.attributes &&
+        Array.from(node.attributes).some((a) => a.name.startsWith("_nghost-"))
+      ) {
         return node;
       }
+
       node = node.parentElement;
     }
 
@@ -53,7 +66,9 @@ const AngularInspector = (() => {
   }
 
   function getSelectorFromHost(hostEl) {
-    if (!hostEl) { return null; }
+    if (!hostEl) {
+      return null;
+    }
 
     const tag = hostEl.tagName.toLowerCase();
     const id = hostEl.id ? `#${hostEl.id}` : "";
@@ -66,7 +81,11 @@ const AngularInspector = (() => {
   }
 
   function isUtilityClass(c) {
-    if (c.startsWith("ng-") || c.startsWith("_ng") || c.startsWith("__angular")) {
+    if (
+      c.startsWith("ng-") ||
+      c.startsWith("_ng") ||
+      c.startsWith("__angular")
+    ) {
       return true;
     }
 
@@ -75,19 +94,107 @@ const AngularInspector = (() => {
     }
 
     const utilityPrefixes = [
-      "flex", "grid", "block", "inline", "hidden", "overflow", "relative", "absolute",
-      "fixed", "sticky", "static", "top", "bottom", "left", "right", "z-", "m-", "p-",
-      "w-", "h-", "min-", "max-", "gap-", "space-", "text-", "font-", "leading-",
-      "tracking-", "bg-", "border", "rounded", "shadow", "opacity-", "cursor-",
-      "pointer-", "select-", "resize", "transition", "duration-", "ease-", "delay-",
-      "animate-", "scale-", "rotate-", "translate-", "skew-", "origin-", "outline",
-      "ring", "divide-", "place-", "justify-", "items-", "content-", "self-", "order-",
-      "col-", "row-", "sr-", "aspect-", "object-", "inset-", "float-", "clear-", "break-",
-      "box-", "table-", "caption-", "list-", "decoration-", "underline", "line-",
-      "whitespace-", "truncate", "align-", "vertical-", "uppercase", "lowercase",
-      "capitalize", "italic", "antialiased", "visible", "invisible", "fill-", "stroke-",
-      "grow", "shrink", "basis-", "container", "mx-", "my-", "px-", "py-", "mt-", "mb-",
-      "ml-", "mr-", "pt-", "pb-", "pl-", "pr-",
+      "flex",
+      "grid",
+      "block",
+      "inline",
+      "hidden",
+      "overflow",
+      "relative",
+      "absolute",
+      "fixed",
+      "sticky",
+      "static",
+      "top",
+      "bottom",
+      "left",
+      "right",
+      "z-",
+      "m-",
+      "p-",
+      "w-",
+      "h-",
+      "min-",
+      "max-",
+      "gap-",
+      "space-",
+      "text-",
+      "font-",
+      "leading-",
+      "tracking-",
+      "bg-",
+      "border",
+      "rounded",
+      "shadow",
+      "opacity-",
+      "cursor-",
+      "pointer-",
+      "select-",
+      "resize",
+      "transition",
+      "duration-",
+      "ease-",
+      "delay-",
+      "animate-",
+      "scale-",
+      "rotate-",
+      "translate-",
+      "skew-",
+      "origin-",
+      "outline",
+      "ring",
+      "divide-",
+      "place-",
+      "justify-",
+      "items-",
+      "content-",
+      "self-",
+      "order-",
+      "col-",
+      "row-",
+      "sr-",
+      "aspect-",
+      "object-",
+      "inset-",
+      "float-",
+      "clear-",
+      "break-",
+      "box-",
+      "table-",
+      "caption-",
+      "list-",
+      "decoration-",
+      "underline",
+      "line-",
+      "whitespace-",
+      "truncate",
+      "align-",
+      "vertical-",
+      "uppercase",
+      "lowercase",
+      "capitalize",
+      "italic",
+      "antialiased",
+      "visible",
+      "invisible",
+      "fill-",
+      "stroke-",
+      "grow",
+      "shrink",
+      "basis-",
+      "container",
+      "mx-",
+      "my-",
+      "px-",
+      "py-",
+      "mt-",
+      "mb-",
+      "ml-",
+      "mr-",
+      "pt-",
+      "pb-",
+      "pl-",
+      "pr-",
     ];
 
     return utilityPrefixes.some((prefix) => c.startsWith(prefix));
@@ -95,6 +202,7 @@ const AngularInspector = (() => {
 
   function buildCssPath(el, hostEl) {
     const parts = [];
+
     let node = el;
 
     while (node && node.nodeType === Node.ELEMENT_NODE) {
@@ -102,6 +210,7 @@ const AngularInspector = (() => {
 
       if (node.id) {
         parts.unshift(`${selector}#${node.id}`);
+
         break;
       }
 
@@ -109,11 +218,16 @@ const AngularInspector = (() => {
         .filter((c) => !isUtilityClass(c))
         .map((c) => `.${c}`)
         .join("");
+
       selector += classes;
 
       const parent = node.parentElement;
+
       if (parent) {
-        const siblings = Array.from(parent.children).filter((c) => c.tagName === node.tagName);
+        const siblings = Array.from(parent.children).filter(
+          (c) => c.tagName === node.tagName,
+        );
+
         if (siblings.length > 1) {
           selector += `:nth-of-type(${siblings.indexOf(node) + 1})`;
         }
@@ -121,7 +235,10 @@ const AngularInspector = (() => {
 
       parts.unshift(selector);
 
-      if (hostEl && node === hostEl) { break; }
+      if (hostEl && node === hostEl) {
+        break;
+      }
+
       node = node.parentElement;
     }
 
@@ -134,7 +251,12 @@ const AngularInspector = (() => {
 
     for (let i = 0; i < el.attributes.length; i++) {
       const { name, value } = el.attributes[i];
-      if (!skip.has(name) && !name.startsWith("_ng") && !name.startsWith("ng-reflect")) {
+
+      if (
+        !skip.has(name) &&
+        !name.startsWith("_ng") &&
+        !name.startsWith("ng-reflect")
+      ) {
         attrs[name] = value;
       }
     }
@@ -144,14 +266,22 @@ const AngularInspector = (() => {
 
   function findTestSelector(el, hostEl) {
     const candidates = ["data-cy", "data-testid", "data-test"];
+
     let node = el;
 
     while (node && node.nodeType === Node.ELEMENT_NODE) {
       for (const attr of candidates) {
         const val = node.getAttribute(attr);
-        if (val) { return { attr, val }; }
+
+        if (val) {
+          return { attr, val };
+        }
       }
-      if (node === hostEl) { break; }
+
+      if (node === hostEl) {
+        break;
+      }
+
       node = node.parentElement;
     }
 
@@ -174,17 +304,40 @@ const AngularInspector = (() => {
 
     const openTag = attrString ? `<${tag} ${attrString}>` : `<${tag}>`;
 
-    return { tag, text, openTag, componentName, hostSelector, cssPath, testSelector };
+    return {
+      tag,
+      text,
+      openTag,
+      componentName,
+      hostSelector,
+      cssPath,
+      testSelector,
+    };
   }
 
   function formatForClipboard(info) {
     const lines = [];
 
-    if (info.componentName) { lines.push(`Component: ${info.componentName}`); }
-    if (info.hostSelector) { lines.push(`Host: ${info.hostSelector}`); }
+    if (info.componentName) {
+      lines.push(`Component: ${info.componentName}`);
+    }
+
+    if (info.hostSelector) {
+      lines.push(`Host: ${info.hostSelector}`);
+    }
+
     lines.push(`Element: ${info.openTag}`);
-    if (info.text) { lines.push(`Text: "${info.text}"`); }
-    if (info.testSelector) { lines.push(`Selector: [${info.testSelector.attr}="${info.testSelector.val}"]`); }
+
+    if (info.text) {
+      lines.push(`Text: "${info.text}"`);
+    }
+
+    if (info.testSelector) {
+      lines.push(
+        `Selector: [${info.testSelector.attr}="${info.testSelector.val}"]`,
+      );
+    }
+
     lines.push(`CSS Path: ${info.cssPath}`);
 
     return lines.join("\n");
