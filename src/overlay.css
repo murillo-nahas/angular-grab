@@ -1,0 +1,29 @@
+.__angular-grab-active__ * {
+  cursor: crosshair !important;
+}
+
+.__angular-grab-highlight__ {
+  outline: 2px solid #dd0031 !important;
+  outline-offset: 1px !important;
+  background-color: rgba(221, 0, 49, 0.06) !important;
+}
+
+#__angular-grab-tooltip__ {
+  position: absolute;
+  z-index: 2147483647;
+  background: #1a1a2e;
+  color: #fff;
+  font-family: monospace;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  pointer-events: none;
+  white-space: nowrap;
+  display: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+#__angular-grab-tooltip__.__angular-grab-copied__ {
+  background: #00c853;
+  color: #fff;
+}
